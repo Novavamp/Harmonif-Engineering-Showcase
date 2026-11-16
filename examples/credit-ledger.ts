@@ -11,7 +11,9 @@ export class CreditLedger {
 
   balance(accountId: string): number {
     return this.entries.filter(e => e.accountId === accountId).reduce((sum, e) => {
-      return sum + (e.kind === "grant" || e.kind === "release" ? e.amount : -e.amount);
+      if (e.kind === "grant" || e.kind === "release") return sum + e.amount;
+      if (e.kind === "reserve") return sum - e.amount;
+      return sum; // Settlement closes a reservation; it does not deduct twice.
     }, 0);
   }
 
